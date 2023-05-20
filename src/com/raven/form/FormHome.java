@@ -5,31 +5,41 @@ package com.raven.form;
 import com.raven.compoment.Item;
 import com.raven.events.EvenItem;
 import com.raven.model.ModelItem;
-import com.raven.swing.PanelItem;
 import com.raven.swing.ScrollBar;
 import java.awt.Component;
 import java.awt.Point;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.text.DecimalFormat;
-import javax.swing.JTable;
+import javax.swing.JSpinner;
 import javax.swing.SwingUtilities;
 import javax.swing.table.DefaultTableModel;
 
+ 
+
 public class FormHome extends javax.swing.JPanel {
 
+//    DefaultTableModel model = new DefaultTableModel();
+         
     public void setEvent(EvenItem event) {
         this.event = event;
     }
     
-    JTable table = new JTable();
-    DefaultTableModel model = new DefaultTableModel();
+//    JTable bill = new JTable();
+    int tonggia=0;
+
+    public int getTonggia() {
+        return tonggia;
+    }
+    
     private EvenItem event;
     public FormHome() {
         initComponents();
         // tao thanh scroll
         scroll.setVerticalScrollBar(new ScrollBar());
 //        table.addRow(new );
+//    loadBang();
+    
     
    
         
@@ -56,23 +66,76 @@ public class FormHome extends javax.swing.JPanel {
        panelItem.revalidate(); // cap nhật lại bố cục panel
        
     }
+    
+   
+    
     // nhan dien chon item
      public void setSelected(Component item){
         for(Component com:panelItem.getComponents() ){
             Item i = (Item)com;
             if(i.isSelected()){
+//                quantity.setValue(0); // set về 0 khi chọn item mới
+//                Total = 0;
+//                jButton_Chon.doClick();// doclick reset thao tác
+                i.setEnabled(false);
                 i.setSelected(false);
             }
+            ((Item) item).setSelected(true);
         }
-        ((Item) item).setSelected(true);
+        
     }
+     
+     public void noSelected(Component item){
+         for(Component com:panelItem.getComponents()){
+             Item i =(Item)com;
+             if(!i.isSelected()){
+                 i.setSelected(true);
+             }
+              ((Item) item).setSelected(false);
+         }
+     }
+     
+    // kiem tra so luong co = 0
+//     public boolean qtyIsZero(){
+//        if(Integer.parseInt(quantity.getValue().toString())==0){
+//            JOptionPane.showMessageDialog(null, "Bạn không được để trống số lượng sản phẩm");
+//            return true;
+//        }else 
+//            return false;
+//                 
+//     }
+
+     
+     public void addRowTable(DefaultTableModel model,ModelItem data, int i,int value){
+                  
+//          int i=0;
+                  
+         
+        // Thêm dữ liệu vào JTable
+         int qty = (int) quantity.getValue();
+        int gia = (int) data.getPrice()*qty;
+      tonggia=0;
+        
+         model.addRow(new Object[] {i++, lbItemName.getText(),value,lbPrice.getText(),gia});
+        tonggia+=gia;   
+        
+       
+     }
+//    
+
+    public int getQuantity() {
+        return (int)quantity.getValue();
+    }
+         
+     
      // show item
      public void showItem(ModelItem data){
          lbItemName.setText(data.getNameItem());
          textDescription.setText(data.getDescription());
          lbbrand.setText(data.getBrandName());
-         DecimalFormat df = new DecimalFormat("$#,## 0.00");
+         DecimalFormat df = new DecimalFormat(" #,### VND");
          lbPrice.setText(df.format(data.getPrice()));
+         System.out.println(data.getBrandName());
      }
      
      // lay vi tri cua item
@@ -85,24 +148,19 @@ public class FormHome extends javax.swing.JPanel {
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
-        scroll = new javax.swing.JScrollPane();
-        panelItem = new com.raven.swing.PanelItem();
         jPanel1 = new javax.swing.JPanel();
         textDescription = new javax.swing.JTextPane();
         jLabel1 = new javax.swing.JLabel();
-        quality = new javax.swing.JSpinner();
+        quantity = new javax.swing.JSpinner();
         jLabel2 = new javax.swing.JLabel();
-        jCheckBox1 = new javax.swing.JCheckBox();
-        bill1 = new com.raven.bill.Bill();
         lbbrand = new javax.swing.JLabel();
         lbPrice = new javax.swing.JLabel();
         lbItemName = new javax.swing.JLabel();
+        scroll = new javax.swing.JScrollPane();
+        panelItem = new com.raven.swing.PanelItem();
 
         setOpaque(false);
-
-        scroll.setBorder(null);
-        scroll.setHorizontalScrollBarPolicy(javax.swing.ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER);
-        scroll.setViewportView(panelItem);
+        setPreferredSize(new java.awt.Dimension(1212, 546));
 
         jPanel1.setOpaque(false);
 
@@ -111,22 +169,16 @@ public class FormHome extends javax.swing.JPanel {
         textDescription.setForeground(new java.awt.Color(196, 184, 184));
 
         jLabel1.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
+        jLabel1.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
         jLabel1.setText("Quantity :");
 
-        quality.setModel(new javax.swing.SpinnerNumberModel(0, 0, null, 1));
-        quality.setBorder(null);
-        quality.setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
+        quantity.setModel(new javax.swing.SpinnerNumberModel(1, 1, null, 1));
+        quantity.setBorder(null);
+        quantity.setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
 
         jLabel2.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
+        jLabel2.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
         jLabel2.setText("Select: ");
-
-        jCheckBox1.setFont(new java.awt.Font("Segoe UI", 0, 18)); // NOI18N
-        jCheckBox1.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(0, 0, 0)));
-        jCheckBox1.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jCheckBox1ActionPerformed(evt);
-            }
-        });
 
         lbbrand.setFont(new java.awt.Font("Segoe UI", 1, 12)); // NOI18N
         lbbrand.setForeground(new java.awt.Color(179, 169, 169));
@@ -140,60 +192,55 @@ public class FormHome extends javax.swing.JPanel {
         lbItemName.setForeground(new java.awt.Color(66, 55, 55));
         lbItemName.setText("Item Name");
 
+        scroll.setBorder(null);
+        scroll.setHorizontalScrollBarPolicy(javax.swing.ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER);
+        scroll.setViewportView(panelItem);
+
         javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
         jPanel1.setLayout(jPanel1Layout);
         jPanel1Layout.setHorizontalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel1Layout.createSequentialGroup()
-                .addContainerGap()
+                .addGap(6, 6, 6)
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
-                        .addGap(57, 57, 57)
-                        .addComponent(jLabel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(quality, javax.swing.GroupLayout.PREFERRED_SIZE, 45, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGap(24, 24, 24)
-                        .addComponent(jLabel2, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(jCheckBox1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                        .addGap(53, 53, 53))
-                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
-                        .addGap(0, 0, Short.MAX_VALUE)
-                        .addComponent(bill1, javax.swing.GroupLayout.PREFERRED_SIZE, 331, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGap(8, 8, 8))
-                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
-                        .addComponent(textDescription)
-                        .addContainerGap())
+                    .addComponent(lbItemName)
+                    .addComponent(lbPrice)
+                    .addComponent(lbbrand)
+                    .addComponent(textDescription, javax.swing.GroupLayout.PREFERRED_SIZE, 339, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addGroup(jPanel1Layout.createSequentialGroup()
-                        .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(lbItemName)
-                            .addComponent(lbPrice)
-                            .addComponent(lbbrand))
-                        .addGap(0, 0, Short.MAX_VALUE))))
+                        .addGap(66, 66, 66)
+                        .addComponent(jLabel1)
+                        .addGap(14, 14, 14)
+                        .addComponent(quantity, javax.swing.GroupLayout.PREFERRED_SIZE, 51, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(jLabel2, javax.swing.GroupLayout.DEFAULT_SIZE, 51, Short.MAX_VALUE)
+                        .addGap(92, 92, 92)))
+                .addComponent(scroll, javax.swing.GroupLayout.PREFERRED_SIZE, 855, javax.swing.GroupLayout.PREFERRED_SIZE))
         );
         jPanel1Layout.setVerticalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel1Layout.createSequentialGroup()
-                .addComponent(lbItemName)
-                .addGap(0, 0, 0)
-                .addComponent(lbPrice)
-                .addGap(0, 0, 0)
-                .addComponent(lbbrand)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(textDescription, javax.swing.GroupLayout.PREFERRED_SIZE, 155, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(jPanel1Layout.createSequentialGroup()
-                        .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                            .addComponent(jLabel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                            .addComponent(quality)
-                            .addComponent(jLabel2, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                        .addGap(9, 9, 9)
-                        .addComponent(bill1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                    .addGroup(jPanel1Layout.createSequentialGroup()
-                        .addComponent(jCheckBox1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                        .addGap(288, 288, 288)))
-                .addGap(17, 17, 17))
+                        .addComponent(lbItemName)
+                        .addGap(0, 0, 0)
+                        .addComponent(lbPrice)
+                        .addGap(0, 0, 0)
+                        .addComponent(lbbrand)
+                        .addGap(6, 6, 6)
+                        .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                            .addGroup(jPanel1Layout.createSequentialGroup()
+                                .addComponent(textDescription, javax.swing.GroupLayout.PREFERRED_SIZE, 155, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addGap(13, 13, 13)
+                                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                    .addComponent(jLabel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                    .addComponent(quantity)))
+                            .addGroup(jPanel1Layout.createSequentialGroup()
+                                .addGap(168, 168, 168)
+                                .addComponent(jLabel2, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
+                        .addGap(283, 283, 283))
+                    .addComponent(scroll, javax.swing.GroupLayout.PREFERRED_SIZE, 543, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addGap(3, 3, 3))
         );
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(this);
@@ -202,26 +249,19 @@ public class FormHome extends javax.swing.JPanel {
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
                 .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(scroll, javax.swing.GroupLayout.DEFAULT_SIZE, 854, Short.MAX_VALUE)
-                .addContainerGap())
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(scroll)
-            .addComponent(jPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+            .addGroup(layout.createSequentialGroup()
+                .addGap(0, 0, 0)
+                .addComponent(jPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addGap(0, 0, 0))
         );
     }// </editor-fold>//GEN-END:initComponents
     
-    DefaultTableModel bill = new DefaultTableModel();
-    Object okla[] = {"okla vai"};
-    private void jCheckBox1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jCheckBox1ActionPerformed
-//        bill.addRow(new Object[]={"okla"});
-    }//GEN-LAST:event_jCheckBox1ActionPerformed
-
+   
     // Variables declaration - do not modify//GEN-BEGIN:variables
-    private com.raven.bill.Bill bill1;
-    private javax.swing.JCheckBox jCheckBox1;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JPanel jPanel1;
@@ -229,8 +269,10 @@ public class FormHome extends javax.swing.JPanel {
     private javax.swing.JLabel lbPrice;
     private javax.swing.JLabel lbbrand;
     private com.raven.swing.PanelItem panelItem;
-    private javax.swing.JSpinner quality;
+    private javax.swing.JSpinner quantity;
     private javax.swing.JScrollPane scroll;
     private javax.swing.JTextPane textDescription;
     // End of variables declaration//GEN-END:variables
+
+  
 }

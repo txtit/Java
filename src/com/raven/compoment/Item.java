@@ -10,9 +10,12 @@ import java.awt.RenderingHints;
 import java.text.DecimalFormat;
 
 
-public class Item extends javax.swing.JPanel {
+public class Item extends javax.swing.JPanel{
+
+  
 
     public boolean isSelected(){
+       
         return selected;
     }
     
@@ -33,7 +36,7 @@ public class Item extends javax.swing.JPanel {
         lbItemName.setText(data.getNameItem());
         lbDescripion.setText(data.getDescription());
         lbbrand.setText(data.getBrandName());
-        DecimalFormat df = new DecimalFormat("$#,##0.00");
+        DecimalFormat df = new DecimalFormat("#,###VND");
         lbPrice.setText(df.format(data.getPrice()));
     }
     
@@ -60,7 +63,13 @@ public class Item extends javax.swing.JPanel {
         }
         super.paint(g);
     }
-
+    
+    public void isSelect()
+    {
+        if(selected){
+            System.out.println("com.raven.compoment.Item.isSelect()");
+        }
+    }
     
     @SuppressWarnings("unchecked")
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents

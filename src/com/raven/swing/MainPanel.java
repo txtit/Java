@@ -70,8 +70,8 @@ public class MainPanel extends JPanel{
     private Icon imageOld;
     private Point imageLocation;
     private Dimension imageSize;
-    private Point targetLocation = new Point(55,109);
-    private Dimension targetSize = new Dimension(250,250);
+    private Point targetLocation = new Point(60,109);
+    private Dimension targetSize = new Dimension(180,120);
     
     
    public MainPanel(){

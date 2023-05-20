@@ -28,7 +28,7 @@ public class ModelItem {
         return price;
     }
 
-    public void setPrice(double price) {
+    public void setPrice(int price) {
         this.price = price;
     }
 
@@ -57,7 +57,7 @@ public class ModelItem {
         this.nameItem = nameItem;
     }
 
-    public ModelItem(int itemID, String nameItem, String description, double price, String brandName, Icon image) {
+    public ModelItem(int itemID, String nameItem, String description, int price, String brandName, Icon image) {
         this.itemID = itemID;
         this.nameItem = nameItem;
         this.description = description;
@@ -76,7 +76,8 @@ public class ModelItem {
     private String nameItem;
 //    private String 
     private String description;
-    private double price;
+    private int price;
     private String brandName;
     private Icon image;
+    
 }
