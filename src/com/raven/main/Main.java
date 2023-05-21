@@ -1,5 +1,7 @@
 package com.raven.main;
 
+
+//import ComboBoxWithTitleExample;
 import com.raven.bill.Bill;
 import com.raven.classify.JPanel_Nuoc;
 import com.raven.classify.JPanel_ThucAn;
@@ -7,6 +9,9 @@ import com.raven.classify.JPanel_TrangMieng;
 import com.raven.events.EvenItem;
 import com.raven.form.FormHome;
 import com.raven.model.ModelItem;
+import com.raven.swing.ScrollBar;
+
+import com.raven.table.ListtTable;
 
 import java.awt.BorderLayout;
 import java.awt.Color;
@@ -23,7 +28,10 @@ import javaswingdev.drawer.DrawerController;
 import javaswingdev.drawer.DrawerItem;
 import javaswingdev.drawer.EventDrawer;
 import javax.swing.ImageIcon;
+import javax.swing.JLabel;
+import javax.swing.JList;
 import javax.swing.JOptionPane;
+import javax.swing.ListCellRenderer;
 import javax.swing.table.DefaultTableModel;
 import org.jdesktop.animation.timing.Animator;
 import org.jdesktop.animation.timing.TimingTargetAdapter;
@@ -41,11 +49,14 @@ public class Main extends javax.swing.JFrame {
     private JPanel_Nuoc nuoc;
     private JPanel_TrangMieng trangmieng;
     private Bill orderBill;
+    private ListtTable listTable;
+    
     ArrayList<ModelItem> list = new ArrayList<ModelItem>();
     String dataDate;
     DefaultTableModel model = new DefaultTableModel();
     int stt=0;
     int Tong=0;
+    String banSelect="";
 //    private JTable bill = new JTable();
  
      
@@ -54,6 +65,10 @@ public class Main extends javax.swing.JFrame {
     public Main() {
         initComponents();
         setBackground(new Color(0,0,0,0));
+        //combo box chọn bàn
+        
+        jComboBox_ChonBan.setBorder(javax.swing.BorderFactory.createTitledBorder("Chọn bàn")); // Đặt tiêu đề cho JComboBox
+        
         init();
         setTime();
         
@@ -83,6 +98,7 @@ public class Main extends javax.swing.JFrame {
                   
                  })
                  .build();
+         
                
          
         // hoat hanh tu foem animatePoint đen Targetpoint
@@ -108,11 +124,11 @@ public class Main extends javax.swing.JFrame {
         }
     
 
-
+ 
     
     private void init(){
 
-        
+        jScrollPane3.setVerticalScrollBar(new ScrollBar());
         // tạo table
         bill2.setModel(model);
         model.addColumn("STT");
@@ -160,7 +176,7 @@ public class Main extends javax.swing.JFrame {
                         Logger.getLogger(Main.class.getName()).log(Level.SEVERE, null, ex);
                     }
                     Date date = new Date();
-                    SimpleDateFormat tf = new SimpleDateFormat("h:mm:ss aa");
+                    SimpleDateFormat tf = new SimpleDateFormat("HH:mm:ss aa");
                     SimpleDateFormat df = new SimpleDateFormat("EEEE, dd-MM-yyyy");
                     String time = tf.format(date);
                     Jt_Time.setText(time.split(" ")[0]+" "+time.split(" ")[1]);
@@ -409,6 +425,7 @@ public class Main extends javax.swing.JFrame {
         menubar = new javax.swing.JButton();
         Jt_date = new javax.swing.JLabel();
         Jt_Time = new javax.swing.JLabel();
+        jButton3 = new javax.swing.JButton();
         mainPanel = new com.raven.swing.MainPanel();
         jButton_Chon = new javax.swing.JButton();
         jPanel4 = new javax.swing.JPanel();
@@ -418,6 +435,7 @@ public class Main extends javax.swing.JFrame {
         jLabel5 = new javax.swing.JLabel();
         jButton2 = new javax.swing.JButton();
         jButton1 = new javax.swing.JButton();
+        jComboBox_ChonBan = new javax.swing.JComboBox<>();
 
         javax.swing.GroupLayout backGround1Layout = new javax.swing.GroupLayout(backGround1);
         backGround1.setLayout(backGround1Layout);
@@ -438,6 +456,8 @@ public class Main extends javax.swing.JFrame {
         backGround2.setBackground(new java.awt.Color(255, 255, 255));
 
         header.setOpaque(false);
+        header.setLayout(new org.netbeans.lib.awtextra.AbsoluteLayout());
+        header.add(winButton, new org.netbeans.lib.awtextra.AbsoluteConstraints(1144, 6, -1, -1));
 
         jButton_ThucAn.setBackground(new java.awt.Color(255, 153, 0));
         jButton_ThucAn.setFont(new java.awt.Font("Segoe UI", 1, 18)); // NOI18N
@@ -448,6 +468,7 @@ public class Main extends javax.swing.JFrame {
                 jButton_ThucAnActionPerformed(evt);
             }
         });
+        header.add(jButton_ThucAn, new org.netbeans.lib.awtextra.AbsoluteConstraints(410, 30, 124, -1));
 
         jButton_TrangMieng.setBackground(new java.awt.Color(51, 255, 51));
         jButton_TrangMieng.setFont(new java.awt.Font("Segoe UI", 1, 18)); // NOI18N
@@ -457,6 +478,7 @@ public class Main extends javax.swing.JFrame {
                 jButton_TrangMiengActionPerformed(evt);
             }
         });
+        header.add(jButton_TrangMieng, new org.netbeans.lib.awtextra.AbsoluteConstraints(622, 30, 157, -1));
 
         jButton_Nuoc.setBackground(new java.awt.Color(51, 204, 255));
         jButton_Nuoc.setFont(new java.awt.Font("Segoe UI", 1, 18)); // NOI18N
@@ -466,6 +488,7 @@ public class Main extends javax.swing.JFrame {
                 jButton_NuocActionPerformed(evt);
             }
         });
+        header.add(jButton_Nuoc, new org.netbeans.lib.awtextra.AbsoluteConstraints(540, 30, -1, -1));
 
         jButton_Home.setBackground(new java.awt.Color(204, 204, 204));
         jButton_Home.setFont(new java.awt.Font("Segoe UI", 1, 18)); // NOI18N
@@ -477,6 +500,7 @@ public class Main extends javax.swing.JFrame {
                 jButton_HomeActionPerformed(evt);
             }
         });
+        header.add(jButton_Home, new org.netbeans.lib.awtextra.AbsoluteConstraints(322, 30, -1, -1));
 
         menubar.setIcon(new javax.swing.ImageIcon(getClass().getResource("/menuicon/menu-barok.png"))); // NOI18N
         menubar.addActionListener(new java.awt.event.ActionListener() {
@@ -484,62 +508,30 @@ public class Main extends javax.swing.JFrame {
                 menubarActionPerformed(evt);
             }
         });
+        header.add(menubar, new org.netbeans.lib.awtextra.AbsoluteConstraints(41, 9, -1, -1));
 
         Jt_date.setFont(new java.awt.Font("Nirmala UI Semilight", 1, 16)); // NOI18N
         Jt_date.setForeground(new java.awt.Color(0, 204, 204));
         Jt_date.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
+        header.add(Jt_date, new org.netbeans.lib.awtextra.AbsoluteConstraints(940, 9, 164, 24));
 
         Jt_Time.setFont(new java.awt.Font("Lucida Console", 1, 16)); // NOI18N
         Jt_Time.setForeground(new java.awt.Color(0, 204, 204));
         Jt_Time.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
+        header.add(Jt_Time, new org.netbeans.lib.awtextra.AbsoluteConstraints(820, 9, 114, 24));
 
-        javax.swing.GroupLayout headerLayout = new javax.swing.GroupLayout(header);
-        header.setLayout(headerLayout);
-        headerLayout.setHorizontalGroup(
-            headerLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(headerLayout.createSequentialGroup()
-                .addGap(41, 41, 41)
-                .addComponent(menubar)
-                .addGap(243, 243, 243)
-                .addComponent(jButton_Home, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(6, 6, 6)
-                .addComponent(jButton_ThucAn, javax.swing.GroupLayout.PREFERRED_SIZE, 124, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(6, 6, 6)
-                .addComponent(jButton_Nuoc)
-                .addGap(6, 6, 6)
-                .addComponent(jButton_TrangMieng, javax.swing.GroupLayout.PREFERRED_SIZE, 157, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(41, 41, 41)
-                .addComponent(Jt_Time, javax.swing.GroupLayout.PREFERRED_SIZE, 114, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(Jt_date, javax.swing.GroupLayout.PREFERRED_SIZE, 164, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 40, Short.MAX_VALUE)
-                .addComponent(winButton, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(18, 18, 18))
-        );
-        headerLayout.setVerticalGroup(
-            headerLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(headerLayout.createSequentialGroup()
-                .addGap(30, 30, 30)
-                .addComponent(jButton_Home, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-            .addGroup(headerLayout.createSequentialGroup()
-                .addGap(30, 30, 30)
-                .addComponent(jButton_ThucAn, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-            .addGroup(headerLayout.createSequentialGroup()
-                .addGap(30, 30, 30)
-                .addComponent(jButton_Nuoc))
-            .addGroup(headerLayout.createSequentialGroup()
-                .addGap(30, 30, 30)
-                .addComponent(jButton_TrangMieng))
-            .addGroup(headerLayout.createSequentialGroup()
-                .addGap(6, 6, 6)
-                .addComponent(winButton, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-            .addGroup(headerLayout.createSequentialGroup()
-                .addGap(9, 9, 9)
-                .addGroup(headerLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(Jt_date, javax.swing.GroupLayout.PREFERRED_SIZE, 24, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(Jt_Time, javax.swing.GroupLayout.PREFERRED_SIZE, 24, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(menubar)))
-        );
+        jButton3.setText("Danh Sách Bàn");
+        jButton3.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                jButton3MouseClicked(evt);
+            }
+        });
+        jButton3.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButton3ActionPerformed(evt);
+            }
+        });
+        header.add(jButton3, new org.netbeans.lib.awtextra.AbsoluteConstraints(200, 30, -1, -1));
 
         mainPanel.setBackground(new java.awt.Color(193, 193, 193));
 
@@ -613,19 +605,30 @@ public class Main extends javax.swing.JFrame {
                 .addContainerGap())
         );
 
+        jComboBox_ChonBan.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Bàn 1", "Bàn 2", "Bàn 3", "Bàn 4", "Bàn 5", "Bàn 6", "Bàn 7", "Bàn 8", "Bàn 9", "Bàn 10" }));
+        jComboBox_ChonBan.setOpaque(true);
+
         javax.swing.GroupLayout mainPanelLayout = new javax.swing.GroupLayout(mainPanel);
         mainPanel.setLayout(mainPanelLayout);
         mainPanelLayout.setHorizontalGroup(
             mainPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(mainPanelLayout.createSequentialGroup()
-                .addGap(272, 272, 272)
-                .addComponent(jButton_Chon))
-            .addComponent(jPanel4, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGroup(mainPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(mainPanelLayout.createSequentialGroup()
+                        .addGap(272, 272, 272)
+                        .addComponent(jButton_Chon))
+                    .addComponent(jPanel4, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addGroup(mainPanelLayout.createSequentialGroup()
+                        .addGap(156, 156, 156)
+                        .addComponent(jComboBox_ChonBan, javax.swing.GroupLayout.PREFERRED_SIZE, 145, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                .addGap(878, 878, 878))
         );
         mainPanelLayout.setVerticalGroup(
             mainPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(mainPanelLayout.createSequentialGroup()
-                .addGap(235, 235, 235)
+                .addContainerGap()
+                .addComponent(jComboBox_ChonBan, javax.swing.GroupLayout.PREFERRED_SIZE, 63, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(166, 166, 166)
                 .addComponent(jButton_Chon)
                 .addGap(12, 12, 12)
                 .addComponent(jPanel4, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
@@ -753,7 +756,8 @@ public class Main extends javax.swing.JFrame {
     }//GEN-LAST:event_jButton_ChonActionPerformed
 
     private void jButton_ChonMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jButton_ChonMouseClicked
-
+        banSelect=jComboBox_ChonBan.getSelectedItem().toString();
+        System.out.println(banSelect);
         if(home.isShowing()){
             stt++;
             
@@ -804,6 +808,15 @@ public class Main extends javax.swing.JFrame {
       jTextField_Tong2.setText(Integer.toString(Tong));
     }//GEN-LAST:event_jButton1MouseClicked
 
+    private void jButton3MouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jButton3MouseClicked
+        listTable = new ListtTable(banSelect);
+        listTable.setVisible(true);
+    }//GEN-LAST:event_jButton3MouseClicked
+
+    private void jButton3ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton3ActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_jButton3ActionPerformed
+
     /**
      * @param args the command line arguments
      */
@@ -848,11 +861,13 @@ public class Main extends javax.swing.JFrame {
     private javax.swing.JPanel header;
     private javax.swing.JButton jButton1;
     private javax.swing.JButton jButton2;
+    private javax.swing.JButton jButton3;
     private javax.swing.JButton jButton_Chon;
     private javax.swing.JButton jButton_Home;
     private javax.swing.JButton jButton_Nuoc;
     private javax.swing.JButton jButton_ThucAn;
     private javax.swing.JButton jButton_TrangMieng;
+    private javax.swing.JComboBox<String> jComboBox_ChonBan;
     private javax.swing.JLabel jLabel5;
     private javax.swing.JPanel jPanel1;
     private javax.swing.JPanel jPanel4;

@@ -2,6 +2,7 @@
 package com.raven.bill;
 
 import com.raven.model.ModelItem;
+import com.raven.swing.ScrollBar;
 import java.text.DecimalFormat;
 import java.text.DecimalFormatSymbols;
 import java.util.ArrayList;
@@ -27,7 +28,7 @@ import javax.swing.table.TableCellRenderer;
    
     public Bill(ArrayList<ModelItem> list,int value,String dataDate){
         initComponents();
-         
+         jScrollPane1.setVerticalScrollBar(new ScrollBar());
        bill.setModel(model);
       
          setLocationRelativeTo(null);
