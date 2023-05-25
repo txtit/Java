@@ -3,6 +3,9 @@ package com.raven.main;
 
 //import ComboBoxWithTitleExample;
 import com.raven.bill.Bill;
+import com.raven.bill.TableActionCellEditor;
+import com.raven.bill.TableActionCellRender;
+import com.raven.bill.TableActionEvent;
 import com.raven.classify.JPanel_Nuoc;
 import com.raven.classify.JPanel_ThucAn;
 import com.raven.classify.JPanel_TrangMieng;
@@ -10,14 +13,18 @@ import com.raven.events.EvenItem;
 import com.raven.form.FormHome;
 import com.raven.model.ModelItem;
 import com.raven.swing.ScrollBar;
-
+import javax.swing.table.DefaultTableCellRenderer;
+import javax.swing.table.TableCellRenderer;
 import com.raven.table.ListtTable;
 
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Component;
 import java.awt.Dimension;
+import java.awt.FlowLayout;
 import java.awt.Point;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
@@ -28,6 +35,8 @@ import javaswingdev.drawer.DrawerController;
 import javaswingdev.drawer.DrawerItem;
 import javaswingdev.drawer.EventDrawer;
 import javax.swing.ImageIcon;
+import javax.swing.JButton;
+import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JList;
 import javax.swing.JOptionPane;
@@ -36,6 +45,7 @@ import javax.swing.table.DefaultTableModel;
 import org.jdesktop.animation.timing.Animator;
 import org.jdesktop.animation.timing.TimingTargetAdapter;
 import org.jdesktop.animation.timing.interpolation.PropertySetter;
+import SQL.*;
 
 
 public class Main extends javax.swing.JFrame {
@@ -50,7 +60,7 @@ public class Main extends javax.swing.JFrame {
     private JPanel_TrangMieng trangmieng;
     private Bill orderBill;
     private ListtTable listTable;
-    
+    private DangNhap login;
     ArrayList<ModelItem> list = new ArrayList<ModelItem>();
     String dataDate;
     DefaultTableModel model = new DefaultTableModel();
@@ -66,7 +76,7 @@ public class Main extends javax.swing.JFrame {
         initComponents();
         setBackground(new Color(0,0,0,0));
         //combo box chọn bàn
-        
+        setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         jComboBox_ChonBan.setBorder(javax.swing.BorderFactory.createTitledBorder("Chọn bàn")); // Đặt tiêu đề cho JComboBox
         
         init();
@@ -94,6 +104,16 @@ public class Main extends javax.swing.JFrame {
             @Override
             public void selected(int Data, DrawerItem item) {
                 
+                if (Data == 6) { // Khi nhấn vào item "Đăng Nhập"
+                        // Tắt JFrame hiện tại (Main)
+                        dispose();
+
+                        // Tạo và hiển thị JFrame mới (NewFrame)
+                        login = new DangNhap();
+                        login.setVisible(true);
+                    } else if(Data == 0 ){
+                        
+                    }
             }
                   
                  })
@@ -124,7 +144,7 @@ public class Main extends javax.swing.JFrame {
         }
     
 
- 
+
     
     private void init(){
 
@@ -133,10 +153,34 @@ public class Main extends javax.swing.JFrame {
         bill2.setModel(model);
         model.addColumn("STT");
         model.addColumn("Tên");
-        model.addColumn("Số Lượng");
+        model.addColumn("SL");
         model.addColumn("Giá");
         model.addColumn("Tổng");
-        // get table
+        model.addColumn("HĐ");
+        TableActionEvent2 event = new TableActionEvent2() {
+           
+            @Override
+            public void onDelete(int row) {
+               if(bill2.isEnabled()){
+                   bill2.getCellEditor().stopCellEditing();
+               }
+                int option = JOptionPane.showConfirmDialog(null, "Bạn có chắc muốn xóa?", "Xác nhận", JOptionPane.YES_NO_OPTION);
+        if (option == JOptionPane.YES_OPTION) {
+           model.removeRow(row);
+           list.remove(row);
+           
+        } else {
+            JOptionPane.showMessageDialog(null, "không xóa");
+        }
+               
+            }
+
+            
+
+          
+        };
+         bill2.getColumnModel().getColumn(5).setCellRenderer(new TableActionCellRender2());
+         bill2.getColumnModel().getColumn(5).setCellEditor(new TableActionCellEditor2(event));
       
         // taoj home panel
         home = new FormHome();
@@ -426,6 +470,7 @@ public class Main extends javax.swing.JFrame {
         Jt_date = new javax.swing.JLabel();
         Jt_Time = new javax.swing.JLabel();
         jButton3 = new javax.swing.JButton();
+        badgeButton1 = new com.raven.win_button.BadgeButton();
         mainPanel = new com.raven.swing.MainPanel();
         jButton_Chon = new javax.swing.JButton();
         jPanel4 = new javax.swing.JPanel();
@@ -513,7 +558,7 @@ public class Main extends javax.swing.JFrame {
         Jt_date.setFont(new java.awt.Font("Nirmala UI Semilight", 1, 16)); // NOI18N
         Jt_date.setForeground(new java.awt.Color(0, 204, 204));
         Jt_date.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
-        header.add(Jt_date, new org.netbeans.lib.awtextra.AbsoluteConstraints(940, 9, 164, 24));
+        header.add(Jt_date, new org.netbeans.lib.awtextra.AbsoluteConstraints(940, 9, 200, 24));
 
         Jt_Time.setFont(new java.awt.Font("Lucida Console", 1, 16)); // NOI18N
         Jt_Time.setForeground(new java.awt.Color(0, 204, 204));
@@ -526,12 +571,15 @@ public class Main extends javax.swing.JFrame {
                 jButton3MouseClicked(evt);
             }
         });
-        jButton3.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jButton3ActionPerformed(evt);
+        header.add(jButton3, new org.netbeans.lib.awtextra.AbsoluteConstraints(90, 30, -1, -1));
+
+        badgeButton1.setIcon(new javax.swing.ImageIcon(getClass().getResource("/image/icon.png"))); // NOI18N
+        badgeButton1.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                badgeButton1MouseClicked(evt);
             }
         });
-        header.add(jButton3, new org.netbeans.lib.awtextra.AbsoluteConstraints(200, 30, -1, -1));
+        header.add(badgeButton1, new org.netbeans.lib.awtextra.AbsoluteConstraints(170, 0, 160, 60));
 
         mainPanel.setBackground(new java.awt.Color(193, 193, 193));
 
@@ -552,10 +600,11 @@ public class Main extends javax.swing.JFrame {
 
             },
             new String [] {
-                "Tên", "Số lượng", "Giá", "Tổng"
+                "Tên", "Số lượng", "Giá", "Tổng", "okla", "Hành Động"
             }
         ));
         bill2.setOpaque(false);
+        bill2.setRowHeight(40);
         jScrollPane3.setViewportView(bill2);
 
         jLabel5.setText("Tổng : ");
@@ -564,6 +613,11 @@ public class Main extends javax.swing.JFrame {
         jButton2.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseClicked(java.awt.event.MouseEvent evt) {
                 jButton2MouseClicked(evt);
+            }
+        });
+        jButton2.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButton2ActionPerformed(evt);
             }
         });
 
@@ -578,31 +632,32 @@ public class Main extends javax.swing.JFrame {
         jPanel4.setLayout(jPanel4Layout);
         jPanel4Layout.setHorizontalGroup(
             jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel4Layout.createSequentialGroup()
-                .addContainerGap()
-                .addComponent(jButton1)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addComponent(jButton2)
-                .addGap(18, 18, 18)
-                .addComponent(jLabel5)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jTextField_Tong2, javax.swing.GroupLayout.PREFERRED_SIZE, 92, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(17, 17, 17))
+            .addComponent(jScrollPane3, javax.swing.GroupLayout.PREFERRED_SIZE, 340, javax.swing.GroupLayout.PREFERRED_SIZE)
             .addGroup(jPanel4Layout.createSequentialGroup()
-                .addComponent(jScrollPane3, javax.swing.GroupLayout.PREFERRED_SIZE, 340, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(0, 0, Short.MAX_VALUE))
+                .addGap(25, 25, 25)
+                .addComponent(jButton1, javax.swing.GroupLayout.PREFERRED_SIZE, 56, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(32, 32, 32)
+                .addComponent(jButton2)
+                .addGap(6, 6, 6)
+                .addComponent(jLabel5)
+                .addGap(5, 5, 5)
+                .addComponent(jTextField_Tong2, javax.swing.GroupLayout.PREFERRED_SIZE, 92, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
         jPanel4Layout.setVerticalGroup(
             jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel4Layout.createSequentialGroup()
-                .addComponent(jScrollPane3, javax.swing.GroupLayout.DEFAULT_SIZE, 235, Short.MAX_VALUE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addGroup(jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jTextField_Tong2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jLabel5)
-                    .addComponent(jButton2)
-                    .addComponent(jButton1))
-                .addContainerGap())
+                .addComponent(jScrollPane3, javax.swing.GroupLayout.PREFERRED_SIZE, 235, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(6, 6, 6)
+                .addGroup(jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                        .addComponent(jButton2)
+                        .addComponent(jButton1))
+                    .addGroup(jPanel4Layout.createSequentialGroup()
+                        .addGap(3, 3, 3)
+                        .addComponent(jLabel5))
+                    .addComponent(jTextField_Tong2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addGap(6, 6, 6))
         );
 
         jComboBox_ChonBan.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Bàn 1", "Bàn 2", "Bàn 3", "Bàn 4", "Bàn 5", "Bàn 6", "Bàn 7", "Bàn 8", "Bàn 9", "Bàn 10" }));
@@ -621,7 +676,7 @@ public class Main extends javax.swing.JFrame {
                     .addGroup(mainPanelLayout.createSequentialGroup()
                         .addGap(156, 156, 156)
                         .addComponent(jComboBox_ChonBan, javax.swing.GroupLayout.PREFERRED_SIZE, 145, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                .addGap(878, 878, 878))
+                .addGap(866, 866, 866))
         );
         mainPanelLayout.setVerticalGroup(
             mainPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -756,8 +811,9 @@ public class Main extends javax.swing.JFrame {
     }//GEN-LAST:event_jButton_ChonActionPerformed
 
     private void jButton_ChonMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jButton_ChonMouseClicked
-        banSelect=jComboBox_ChonBan.getSelectedItem().toString();
-        System.out.println(banSelect);
+         
+        
+//        System.out.println(banSelect);
         if(home.isShowing()){
             stt++;
             
@@ -792,9 +848,10 @@ public class Main extends javax.swing.JFrame {
         }else{
               dataDate= Jt_Time.getText()+
                 "\n  Date: "+Jt_date.getText();
+              banSelect=jComboBox_ChonBan.getSelectedItem().toString();
          // bang order
            
-         orderBill = new Bill(list,home.getQuantity(),dataDate);
+         orderBill = new Bill(list,home.getQuantity(),dataDate,banSelect);
          orderBill.setVisible(true);
         }
       
@@ -809,13 +866,19 @@ public class Main extends javax.swing.JFrame {
     }//GEN-LAST:event_jButton1MouseClicked
 
     private void jButton3MouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jButton3MouseClicked
-        listTable = new ListtTable(banSelect);
-        listTable.setVisible(true);
+//        listTable = new ListtTable(banSelect);
+//        listTable.setVisible(true);\
+badgeButton1.setText(Integer.parseInt(badgeButton1.getText()) + 1 + "");
     }//GEN-LAST:event_jButton3MouseClicked
 
-    private void jButton3ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton3ActionPerformed
+    private void jButton2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton2ActionPerformed
         // TODO add your handling code here:
-    }//GEN-LAST:event_jButton3ActionPerformed
+    }//GEN-LAST:event_jButton2ActionPerformed
+
+    private void badgeButton1MouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_badgeButton1MouseClicked
+        listTable = new ListtTable(banSelect);
+        listTable.setVisible(true);
+    }//GEN-LAST:event_badgeButton1MouseClicked
 
     /**
      * @param args the command line arguments
@@ -857,6 +920,7 @@ public class Main extends javax.swing.JFrame {
     private javax.swing.JLabel Jt_date;
     private com.raven.swing.BackGround backGround1;
     private com.raven.swing.BackGround backGround2;
+    private com.raven.win_button.BadgeButton badgeButton1;
     private javax.swing.JTable bill2;
     private javax.swing.JPanel header;
     private javax.swing.JButton jButton1;

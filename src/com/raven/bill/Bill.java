@@ -3,6 +3,8 @@ package com.raven.bill;
 
 import com.raven.model.ModelItem;
 import com.raven.swing.ScrollBar;
+import java.awt.event.KeyAdapter;
+import java.awt.event.KeyEvent;
 import java.text.DecimalFormat;
 import java.text.DecimalFormatSymbols;
 import java.util.ArrayList;
@@ -16,25 +18,28 @@ import javax.swing.table.TableCellRenderer;
    
     public class Bill extends javax.swing.JFrame {
     DefaultTableModel model = new DefaultTableModel();
-     private String dataDate;
+    private String dataDate;
+    DetailBill detailBill;
     
     int Tong = 0;
-
+    String Ban = "";
     public Bill() {
         
       
           
     }
    
-    public Bill(ArrayList<ModelItem> list,int value,String dataDate){
+    public Bill(ArrayList<ModelItem> list,int value,String dataDate,String Ban){
         initComponents();
          jScrollPane1.setVerticalScrollBar(new ScrollBar());
        bill.setModel(model);
       
          setLocationRelativeTo(null);
          setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
+         
          //set ngay gio 
          this.dataDate = dataDate;
+         this.Ban=Ban;
          
 //        DefaultTableModel model = new DefaultTableModel();
         model.addColumn("STT");
@@ -42,39 +47,43 @@ import javax.swing.table.TableCellRenderer;
         model.addColumn("Số Lượng");
         model.addColumn("Giá");
         model.addColumn("Tổng");
-        model.addColumn("Hành động");
+//        model.addColumn("Hành động");
         
         // them hanh dong cho table
-        TableActionEvent event = new TableActionEvent() {
-            @Override
-            public void onEdit(int row) {
-                System.out.println("Edit row : " +row);
-            }
-
-            @Override
-            public void onDelete(int row) {
-               if(bill.isEnabled()){
-                   bill.getCellEditor().stopCellEditing();
-               }
-                int option = JOptionPane.showConfirmDialog(null, "Bạn có chắc muốn xóa?", "Xác nhận", JOptionPane.YES_NO_OPTION);
-        if (option == JOptionPane.YES_OPTION) {
-           model.removeRow(row);
-        } else {
-            JOptionPane.showMessageDialog(null, "không xóa");
-        }
-               
-            }
-
-            @Override
-            public void onView(int row) {
-                System.out.println("View row: "+ row);
-            }
-        };
-         bill.getColumnModel().getColumn(5).setCellRenderer(new TableActionCellRender());
-         bill.getColumnModel().getColumn(5).setCellEditor(new TableActionCellEditor(event));
+//        TableActionEvent event = new TableActionEvent() {
+//            @Override
+//            public void onEdit(int row) {
+//                System.out.println("Edit row : " +row);
+//            }
+//
+//            @Override
+//            public void onDelete(int row) {
+//               if(bill.isEnabled()){
+//                   bill.getCellEditor().stopCellEditing();
+//               }
+//                int option = JOptionPane.showConfirmDialog(null, "Bạn có chắc muốn xóa?", "Xác nhận", JOptionPane.YES_NO_OPTION);
+//        if (option == JOptionPane.YES_OPTION) {
+//           model.removeRow(row);
+//        } else {
+//            JOptionPane.showMessageDialog(null, "không xóa");
+//        }
+//               
+//            }
+//
+//            @Override
+//            public void onView(int row) {
+//                System.out.println("View row: "+ row);
+//            }
+//        };
+//         bill.getColumnModel().getColumn(5).setCellRenderer(new TableActionCellRender());
+//         bill.getColumnModel().getColumn(5).setCellEditor(new TableActionCellEditor(event));
         z(list,value);
+        Calc();
+        KhuyenMai();
         JDateTime.setText("Time : "+"\n"+dataDate );
-          
+        jLabel_Ban.setText(Ban);
+        
+//          
 
     }
     public void z(ArrayList<ModelItem> list,int value){
@@ -94,7 +103,7 @@ import javax.swing.table.TableCellRenderer;
         symbols.setGroupingSeparator(',');
         DecimalFormat df = new DecimalFormat("#,###.## VND  ", symbols);
        jTextField_tong.setText(df.format(Tong ));
-
+        jTextField_ThanhToans.setText(String.valueOf(Tong));
             
          }
         
@@ -103,6 +112,68 @@ import javax.swing.table.TableCellRenderer;
         }
        
     }
+    public void Calc(){
+        jTextField_khachTra.addKeyListener(new KeyAdapter() {
+            @Override
+            public void keyReleased(KeyEvent e) {
+                String thanhToanStr = jTextField_ThanhToans.getText();
+                String khachTraStr = jTextField_khachTra.getText();
+                
+
+                if ( !khachTraStr.isEmpty()) {
+                    try {
+                        int thanhToan = Integer.parseInt(thanhToanStr);
+                        int khachTra = Integer.parseInt(khachTraStr);
+                        
+                        int tienThua = khachTra - thanhToan;
+
+                        DecimalFormatSymbols symbols = new DecimalFormatSymbols(Locale.getDefault());
+                        symbols.setDecimalSeparator('.');
+                        symbols.setGroupingSeparator(',');
+                        DecimalFormat df = new DecimalFormat("#,###.## VND ", symbols);
+
+                        jTextField_TienThua.setText(df.format(tienThua));
+                    } catch (NumberFormatException ex) {
+                        jTextField_TienThua.setText("");
+                    }
+                } else {
+                    jTextField_TienThua.setText("");
+                }
+            }
+        });
+    }
+    
+    public void KhuyenMai(){
+        jTxt_KhuyenMai.addKeyListener(new KeyAdapter() {
+            @Override
+            public void keyReleased(KeyEvent e) {
+                String thanhToanStr = jTextField_ThanhToans.getText();
+                String KhuyenMai = jTxt_KhuyenMai.getText();
+                String okla= "thaodeptrai";
+               if ( !KhuyenMai.isEmpty()&& jTxt_KhuyenMai.getText().equals(okla)){
+                   
+                   int thanhToan = Integer.parseInt(thanhToanStr);
+//                   int khuyenMai = ();     
+                   int ThanhToanNew = thanhToan - (thanhToan*50)/100;
+//                    DecimalFormatSymbols symbols = new DecimalFormatSymbols(Locale.getDefault());
+//                        symbols.setDecimalSeparator('.');
+//                        symbols.setGroupingSeparator(',');
+//                        DecimalFormat df = new DecimalFormat("#,###.## VND ", symbols);
+                        jTextField_ThanhToans.setText(String.valueOf(ThanhToanNew));
+                   
+                } else {
+//                            DecimalFormatSymbols symbols = new DecimalFormatSymbols(Locale.getDefault());
+//                        symbols.setDecimalSeparator('.');
+//                        symbols.setGroupingSeparator(',');
+//                       DecimalFormat df = new DecimalFormat("#,###.## VND ", symbols);
+                     
+                    jTextField_ThanhToans.setText(String.valueOf(Tong));
+                }
+               
+            }
+           
+        });
+    }
     @SuppressWarnings("unchecked")
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
@@ -110,29 +181,31 @@ import javax.swing.table.TableCellRenderer;
         jPanel1 = new javax.swing.JPanel();
         jScrollPane1 = new javax.swing.JScrollPane();
         bill = new javax.swing.JTable();
-        jLabel1 = new javax.swing.JLabel();
-        jTextField_tong = new javax.swing.JTextField();
         imageAvatar1 = new test.ImageAvatar();
-        jLabel2 = new javax.swing.JLabel();
         jLabel4 = new javax.swing.JLabel();
-        jLabel3 = new javax.swing.JLabel();
         jLabel5 = new javax.swing.JLabel();
-        jLabel7 = new javax.swing.JLabel();
-        jLabel8 = new javax.swing.JLabel();
-        jLabel9 = new javax.swing.JLabel();
-        jTextField1 = new javax.swing.JTextField();
-        jTextField2 = new javax.swing.JTextField();
-        jButton1 = new javax.swing.JButton();
-        jTextField3 = new javax.swing.JTextField();
-        jButton2 = new javax.swing.JButton();
         JDateTime = new javax.swing.JLabel();
         jLabel10 = new javax.swing.JLabel();
+        jLabel2 = new javax.swing.JLabel();
+        jLabel12 = new javax.swing.JLabel();
+        jLabel13 = new javax.swing.JLabel();
+        jLabel14 = new javax.swing.JLabel();
+        jTxt_KhuyenMai = new javax.swing.JTextField();
+        jLabel7 = new javax.swing.JLabel();
+        jTextField_ThanhToans = new javax.swing.JTextField();
+        jLabel1 = new javax.swing.JLabel();
+        jTextField_tong = new javax.swing.JTextField();
+        jButton1 = new javax.swing.JButton();
+        jButton2 = new javax.swing.JButton();
+        jTextField_khachTra = new javax.swing.JTextField();
+        jTextField_TienThua = new javax.swing.JTextField();
+        jLabel_Ban = new javax.swing.JLabel();
+        jButton3 = new javax.swing.JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 
         jPanel1.setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
         jPanel1.setName(""); // NOI18N
-        jPanel1.setOpaque(false);
         jPanel1.setLayout(new org.netbeans.lib.awtextra.AbsoluteLayout());
 
         bill.setModel(new javax.swing.table.DefaultTableModel(
@@ -154,17 +227,7 @@ import javax.swing.table.TableCellRenderer;
         });
         jScrollPane1.setViewportView(bill);
 
-        jPanel1.add(jScrollPane1, new org.netbeans.lib.awtextra.AbsoluteConstraints(-3, 231, 540, 285));
-
-        jLabel1.setText("Tổng :");
-        jPanel1.add(jLabel1, new org.netbeans.lib.awtextra.AbsoluteConstraints(290, 529, 76, -1));
-
-        jTextField_tong.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jTextField_tongActionPerformed(evt);
-            }
-        });
-        jPanel1.add(jTextField_tong, new org.netbeans.lib.awtextra.AbsoluteConstraints(384, 523, 105, -1));
+        jPanel1.add(jScrollPane1, new org.netbeans.lib.awtextra.AbsoluteConstraints(50, 220, 700, 300));
 
         imageAvatar1.setBorderSize(3);
         imageAvatar1.setBorderSpace(2);
@@ -183,56 +246,66 @@ import javax.swing.table.TableCellRenderer;
             .addGap(0, 102, Short.MAX_VALUE)
         );
 
-        jPanel1.add(imageAvatar1, new org.netbeans.lib.awtextra.AbsoluteConstraints(95, 0, 329, 102));
+        jPanel1.add(imageAvatar1, new org.netbeans.lib.awtextra.AbsoluteConstraints(230, 0, 329, 102));
+
+        jLabel4.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
+        jLabel4.setText("SPEAGO RESTAURANT");
+        jPanel1.add(jLabel4, new org.netbeans.lib.awtextra.AbsoluteConstraints(320, 130, 149, -1));
+
+        jLabel5.setFont(new java.awt.Font("Serif", 1, 18)); // NOI18N
+        jLabel5.setText("HÓA ĐƠN BÁN HÀNG");
+        jPanel1.add(jLabel5, new org.netbeans.lib.awtextra.AbsoluteConstraints(310, 170, -1, -1));
+
+        JDateTime.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
+        jPanel1.add(JDateTime, new org.netbeans.lib.awtextra.AbsoluteConstraints(40, 30, 300, 20));
+
+        jLabel10.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
+        jLabel10.setText("***********************************************************************************");
+        jPanel1.add(jLabel10, new org.netbeans.lib.awtextra.AbsoluteConstraints(170, 150, 452, 20));
 
         jLabel2.setFont(new java.awt.Font("SimSun-ExtB", 1, 24)); // NOI18N
         jLabel2.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
         jLabel2.setText("SPEAGO RESTAURANT");
-        jPanel1.add(jLabel2, new org.netbeans.lib.awtextra.AbsoluteConstraints(133, 114, 255, -1));
+        jPanel1.add(jLabel2, new org.netbeans.lib.awtextra.AbsoluteConstraints(270, 100, 255, -1));
 
-        jLabel4.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
-        jLabel4.setText("SPEAGO RESTAURANT");
-        jPanel1.add(jLabel4, new org.netbeans.lib.awtextra.AbsoluteConstraints(186, 145, 149, -1));
+        jLabel12.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
+        jLabel12.setText("Mã Khuyễn Mãi :");
+        jPanel1.add(jLabel12, new org.netbeans.lib.awtextra.AbsoluteConstraints(260, 600, -1, 20));
 
-        jLabel3.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
-        jLabel3.setText("**************************************************************************************");
-        jPanel1.add(jLabel3, new org.netbeans.lib.awtextra.AbsoluteConstraints(27, 555, 462, -1));
+        jLabel13.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
+        jLabel13.setText("Thanh Toán :");
+        jPanel1.add(jLabel13, new org.netbeans.lib.awtextra.AbsoluteConstraints(50, 600, -1, 20));
 
-        jLabel5.setFont(new java.awt.Font("Serif", 1, 18)); // NOI18N
-        jLabel5.setText("HÓA ĐƠN");
-        jPanel1.add(jLabel5, new org.netbeans.lib.awtextra.AbsoluteConstraints(217, 201, -1, -1));
+        jLabel14.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
+        jLabel14.setText("Khách Trả :");
+        jPanel1.add(jLabel14, new org.netbeans.lib.awtextra.AbsoluteConstraints(60, 540, -1, 20));
+        jPanel1.add(jTxt_KhuyenMai, new org.netbeans.lib.awtextra.AbsoluteConstraints(380, 590, 120, 34));
 
-        jLabel7.setText("Tên Khách Hàng: ");
-        jPanel1.add(jLabel7, new org.netbeans.lib.awtextra.AbsoluteConstraints(19, 589, 92, -1));
+        jLabel7.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
+        jLabel7.setText("Tiền Thừa :");
+        jPanel1.add(jLabel7, new org.netbeans.lib.awtextra.AbsoluteConstraints(260, 540, -1, 20));
+        jPanel1.add(jTextField_ThanhToans, new org.netbeans.lib.awtextra.AbsoluteConstraints(140, 590, 110, 34));
 
-        jLabel8.setText("Số điện thoại:");
-        jPanel1.add(jLabel8, new org.netbeans.lib.awtextra.AbsoluteConstraints(19, 611, 95, -1));
-
-        jLabel9.setText("Khuyến Mãi :");
-        jPanel1.add(jLabel9, new org.netbeans.lib.awtextra.AbsoluteConstraints(247, 598, 90, -1));
-        jPanel1.add(jTextField1, new org.netbeans.lib.awtextra.AbsoluteConstraints(123, 583, 112, -1));
-        jPanel1.add(jTextField2, new org.netbeans.lib.awtextra.AbsoluteConstraints(123, 611, 112, -1));
+        jLabel1.setText("Tổng :");
+        jPanel1.add(jLabel1, new org.netbeans.lib.awtextra.AbsoluteConstraints(530, 540, 76, -1));
+        jPanel1.add(jTextField_tong, new org.netbeans.lib.awtextra.AbsoluteConstraints(590, 532, 120, 30));
 
         jButton1.setBackground(new java.awt.Color(102, 255, 51));
         jButton1.setText("Thanh Toán");
-        jButton1.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jButton1ActionPerformed(evt);
-            }
-        });
-        jPanel1.add(jButton1, new org.netbeans.lib.awtextra.AbsoluteConstraints(37, 526, 132, -1));
-        jPanel1.add(jTextField3, new org.netbeans.lib.awtextra.AbsoluteConstraints(328, 595, 123, -1));
+        jPanel1.add(jButton1, new org.netbeans.lib.awtextra.AbsoluteConstraints(560, 580, 106, 40));
 
         jButton2.setBackground(new java.awt.Color(204, 204, 204));
         jButton2.setText("In Hóa Đơn");
-        jPanel1.add(jButton2, new org.netbeans.lib.awtextra.AbsoluteConstraints(187, 526, -1, -1));
+        jPanel1.add(jButton2, new org.netbeans.lib.awtextra.AbsoluteConstraints(380, 650, -1, 41));
+        jPanel1.add(jTextField_khachTra, new org.netbeans.lib.awtextra.AbsoluteConstraints(140, 530, 110, 34));
+        jPanel1.add(jTextField_TienThua, new org.netbeans.lib.awtextra.AbsoluteConstraints(350, 530, 110, 34));
 
-        JDateTime.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
-        jPanel1.add(JDateTime, new org.netbeans.lib.awtextra.AbsoluteConstraints(110, 170, 300, 20));
+        jLabel_Ban.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
+        jLabel_Ban.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
+        jPanel1.add(jLabel_Ban, new org.netbeans.lib.awtextra.AbsoluteConstraints(360, 200, 80, 20));
 
-        jLabel10.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
-        jLabel10.setText("***********************************************************************************");
-        jPanel1.add(jLabel10, new org.netbeans.lib.awtextra.AbsoluteConstraints(40, 160, 452, -1));
+        jButton3.setText("Cancel");
+        jPanel1.add(jButton3, new org.netbeans.lib.awtextra.AbsoluteConstraints(270, 650, 90, 40));
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
@@ -240,12 +313,12 @@ import javax.swing.table.TableCellRenderer;
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, 532, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, 794, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addContainerGap())
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(jPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+            .addComponent(jPanel1, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
         );
 
         jPanel1.getAccessibleContext().setAccessibleDescription("");
@@ -253,17 +326,9 @@ import javax.swing.table.TableCellRenderer;
         pack();
     }// </editor-fold>//GEN-END:initComponents
 
-    private void jTextField_tongActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jTextField_tongActionPerformed
-        
-    }//GEN-LAST:event_jTextField_tongActionPerformed
-
     private void billMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_billMouseClicked
       PanelAction action = new PanelAction();
     }//GEN-LAST:event_billMouseClicked
-
-    private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
-        // TODO add your handling code here:
-    }//GEN-LAST:event_jButton1ActionPerformed
 
     public static void main(String args[]) {
         java.awt.EventQueue.invokeLater(new Runnable() {
@@ -281,20 +346,23 @@ import javax.swing.table.TableCellRenderer;
     private test.ImageAvatar imageAvatar1;
     private javax.swing.JButton jButton1;
     private javax.swing.JButton jButton2;
+    private javax.swing.JButton jButton3;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel10;
+    private javax.swing.JLabel jLabel12;
+    private javax.swing.JLabel jLabel13;
+    private javax.swing.JLabel jLabel14;
     private javax.swing.JLabel jLabel2;
-    private javax.swing.JLabel jLabel3;
     private javax.swing.JLabel jLabel4;
     private javax.swing.JLabel jLabel5;
     private javax.swing.JLabel jLabel7;
-    private javax.swing.JLabel jLabel8;
-    private javax.swing.JLabel jLabel9;
+    private javax.swing.JLabel jLabel_Ban;
     private javax.swing.JPanel jPanel1;
     private javax.swing.JScrollPane jScrollPane1;
-    private javax.swing.JTextField jTextField1;
-    private javax.swing.JTextField jTextField2;
-    private javax.swing.JTextField jTextField3;
+    private javax.swing.JTextField jTextField_ThanhToans;
+    private javax.swing.JTextField jTextField_TienThua;
+    private javax.swing.JTextField jTextField_khachTra;
     private javax.swing.JTextField jTextField_tong;
+    private javax.swing.JTextField jTxt_KhuyenMai;
     // End of variables declaration//GEN-END:variables
 }
